@@ -7,17 +7,9 @@ import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.s
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 
-/**
- * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
- * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
- * DO NOT USE THIS CODE IN PRODUCTION.
- */
-
-/// @title - A contract for swapping and transferring tokens across chains.
 contract TokenTransferor is OwnerIsCreator {
     using SafeERC20 for IERC20;
 
-    // Custom errors
     error NotEnoughBalance(uint256 currentBalance, uint256 calculatedFees);
     error NothingToWithdraw();
     error FailedToWithdrawEth(address owner, address target, uint256 value);
@@ -27,7 +19,6 @@ contract TokenTransferor is OwnerIsCreator {
     error SwapFailed();
     error ExchangeRateNotSet();
 
-    // Events
     event TokensTransferred(
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
@@ -45,7 +36,6 @@ contract TokenTransferor is OwnerIsCreator {
         uint256 toAmount
     );
 
-    // State variables
     mapping(uint64 => bool) public allowlistedChains;
     mapping(address => mapping(address => uint256)) public exchangeRates;
     IRouterClient private s_router;
@@ -56,7 +46,6 @@ contract TokenTransferor is OwnerIsCreator {
         s_linkToken = IERC20(_link);
     }
 
-    // Modifiers
     modifier onlyAllowlistedChain(uint64 _destinationChainSelector) {
         if (!allowlistedChains[_destinationChainSelector])
             revert DestinationChainNotAllowlisted(_destinationChainSelector);
@@ -68,17 +57,14 @@ contract TokenTransferor is OwnerIsCreator {
         _;
     }
 
-    // Functions for chain management
     function allowlistDestinationChain(uint64 _destinationChainSelector, bool allowed) external onlyOwner {
         allowlistedChains[_destinationChainSelector] = allowed;
     }
 
-    // Functions for swap management
     function setExchangeRate(address fromToken, address toToken, uint256 rate) external onlyOwner {
         exchangeRates[fromToken][toToken] = rate;
     }
 
-    // Main function: Swap and Transfer
     function swapAndTransferTokens(
         uint64 _destinationChainSelector,
         address _receiver,
@@ -87,10 +73,8 @@ contract TokenTransferor is OwnerIsCreator {
         uint256 _fromAmount,
         uint256 _minToAmount
     ) external onlyAllowlistedChain(_destinationChainSelector) validateReceiver(_receiver) returns (bytes32 messageId) {
-        // First, swap the tokens
         uint256 swappedAmount = _swapTokens(_fromToken, _toToken, _fromAmount, _minToAmount);
 
-        // Then transfer the swapped tokens
         Client.EVM2AnyMessage memory evm2AnyMessage = _buildCCIPMessage(
             _receiver,
             _toToken,
@@ -121,7 +105,6 @@ contract TokenTransferor is OwnerIsCreator {
         return messageId;
     }
 
-    // Internal swap function
     function _swapTokens(
         address _fromToken,
         address _toToken,
@@ -142,7 +125,6 @@ contract TokenTransferor is OwnerIsCreator {
         return toAmount;
     }
 
-    // Existing functions from TokenTransferor
     function transferTokensPayLINK(
         uint64 _destinationChainSelector,
         address _receiver,
@@ -264,7 +246,6 @@ contract TokenTransferor is OwnerIsCreator {
             });
     }
 
-    // Utility functions
     receive() external payable {}
 
     function withdraw(address _beneficiary) public onlyOwner {
