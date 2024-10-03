@@ -1,4 +1,5 @@
 require("@matterlabs/hardhat-zksync-solc");
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -36,7 +37,7 @@ module.exports = {
     networks: {
       localhost: {
         url: "http://localhost:7545",
-        accounts: ["0xeD2C539c6E21B9327A626Af12CDeD9A26DCfCA9C"],
+        accounts: [process.env.ACCOUNT],
       },
     },
     settings: {
