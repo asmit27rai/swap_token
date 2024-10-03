@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import Swaping from '../components/Swaping';
 import { UserButton } from '@clerk/clerk-react';
 import Graph from '../components/Graph';
-import { AccountContext } from '../context/AccountContext';
+import { AccountContext } from '../AccountContext';
 
 const Home = () => {
   const { account, connectWallet } = useContext(AccountContext);
