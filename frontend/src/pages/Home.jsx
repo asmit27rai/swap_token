@@ -22,7 +22,7 @@ const Home = () => {
             </div>
           </>
         ) : (
-          <div className="flex-1 rounded-lg shadow-lg p-6 bg-white text-center text-gray-800">
+          <div className="flex-1 rounded-lg shadow-lg p-6text-center text-gray-800">
             <h2 className="text-2xl font-bold mb-4">Connect to MetaMask</h2>
             <p className="mb-4">Please connect your MetaMask wallet to access the features.</p>
             <button
